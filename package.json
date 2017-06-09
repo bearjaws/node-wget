@@ -37,5 +37,8 @@
         "express": "^4.15.3",
         "mocha": "^3.4.2",
         "request": "^2.81.0"
+    },
+    "scripts": {
+        "test": "mocha test/test.js"
     }
 }
