@@ -10,7 +10,7 @@
         "proxy",
         "wget"
     ],
-    "author": "Michael Barajas <michael.a.barajas@gmail.com>",
+    "author": "Bearjaws <michael.a.barajas@gmail.com>",
     "repository": {
         "type": "git",
         "url": "git://github.com/bearjaws/node-wget.git"
@@ -34,6 +34,8 @@
     "license": "MIT",
     "devDependencies": {
         "chai": "^4.0.2",
-        "mocha": "^3.4.2"
+        "express": "^4.15.3",
+        "mocha": "^3.4.2",
+        "request": "^2.81.0"
     }
 }
