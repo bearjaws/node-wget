@@ -25,8 +25,7 @@ describe("Download Tests", function() {
             done();
         });
         download.on('start', function(fileSize) {
-            expect(fileSize).to.be.a('string');
-            fileSize = Number(fileSize);
+            expect(fileSize).to.be.a('number');
             expect(fileSize).to.equal(metadata.size);
         });
         download.on('end', async function(output) {
@@ -38,6 +37,27 @@ describe("Download Tests", function() {
         });
         download.on('progress', function(progress) {
             expect(progress).to.be.above(0);
+            expect(progress).to.be.below(1.00000000000001);
+        });
+    });
+
+    it("Should handle a server that does not have content-length header", function(done) {
+        let download = wget.download('http://localhost:9933/', '/tmp/wget-bs-test.bin');
+        download.on('error', function(err) {
+            console.log(err);
+            expect(err).to.be.null;
+            done();
+        });
+        download.on('start', function(fileSize) {
+            expect(fileSize).to.be.null;
+        });
+        download.on('progress', function(progress) {
+            expect(progress).to.be.above(0);
+            expect(progress).to.be.below(1.00000000000001);
+        });
+
+        download.on('end', function() {
+            done();
         });
     });
 
