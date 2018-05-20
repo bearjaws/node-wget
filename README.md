@@ -80,6 +80,7 @@ req.on('error', function(err) {
 options = {}
     // Set to true to have any gzip stream automatically decompressed before saving
     options.gunzip = false;
+    options.headers = {'User-Agent': 'Node'};
     options.proxy = {};
         options.proxy.protocol = 'http';
         options.proxy.host = 'someproxy.org';
