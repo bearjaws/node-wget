@@ -8,17 +8,20 @@ let wget = require('../lib/wget');
 let baseHTTP = 'http://localhost:8884';
 let metadata = {};
 before(function() {
-   let server = require('./server');
-   return server().then(function() {
-       request(baseHTTP + '/file/metadata', function(err, res, body) {
-           metadata = JSON.parse(body);
-       });
-   });
+    let server = require('./server');
+    return server().then(function() {
+        request(baseHTTP + '/file/metadata', function(err, res, body) {
+            metadata = JSON.parse(body);
+        });
+    });
 });
 
-describe("Download Tests", function() {
-    it("Should be able to download a file", function(done) {
-        let download = wget.download('http://localhost:8884/file', '/tmp/wget-test-file.bin');
+describe('Download Tests', function() {
+    it('Should be able to download a file', function(done) {
+        let download = wget.download(
+            'http://localhost:8884/file',
+            '/tmp/wget-test-file.bin'
+        );
         let bytes = 0;
         download.on('error', function(err) {
             done(err);
@@ -29,7 +32,10 @@ describe("Download Tests", function() {
         });
         download.on('end', function(output) {
             let file = fs.readFileSync('/tmp/wget-test-file.bin');
-            let hash = crypto.createHash('sha256').update(file).digest('hex');
+            let hash = crypto
+                .createHash('sha256')
+                .update(file)
+                .digest('hex');
             expect(output).to.equal('Finished writing to disk');
             expect(hash).to.equal(metadata.hash);
             expect(bytes).to.equal(1024 * 1024);
@@ -45,8 +51,11 @@ describe("Download Tests", function() {
         });
     });
 
-    it("Should handle a server that does not have content-length header", function(done) {
-        let download = wget.download('http://localhost:9933/', '/tmp/wget-bs-test.bin');
+    it('Should handle a server that does not have content-length header', function(done) {
+        let download = wget.download(
+            'http://localhost:9933/',
+            '/tmp/wget-bs-test.bin'
+        );
         download.on('error', function(err) {
             done(err);
         });
@@ -63,8 +72,11 @@ describe("Download Tests", function() {
         });
     });
 
-    it("Should not append to the previous file.", function(done) {
-        let download = wget.download('http://localhost:8884/file', '/tmp/wget-test-file.bin');
+    it('Should not append to the previous file.', function(done) {
+        let download = wget.download(
+            'http://localhost:8884/file',
+            '/tmp/wget-test-file.bin'
+        );
         download.on('error', function(err) {
             console.log(err);
             expect(err).to.be.null;
@@ -72,39 +84,57 @@ describe("Download Tests", function() {
         });
         download.on('end', function(output) {
             let file = fs.readFileSync('/tmp/wget-test-file.bin');
-            let hash = crypto.createHash('sha256').update(file).digest('hex');
+            let hash = crypto
+                .createHash('sha256')
+                .update(file)
+                .digest('hex');
             expect(output).to.equal('Finished writing to disk');
             expect(hash).to.equal(metadata.hash);
             done();
         });
     });
 
-    it("Should handle 302 redirects that end with file download.", function(done) {
-        let download = wget.download('http://localhost:8884/file/redirect', '/tmp/wget-test-file2.bin');
+    it('Should handle 302 redirects that end with file download.', function(done) {
+        let download = wget.download(
+            'http://localhost:8884/file/redirect',
+            '/tmp/wget-test-file2.bin'
+        );
         download.on('end', function(output) {
-            request(baseHTTP + '/file/redirect/metadata', function(err, res, body) {
+            request(baseHTTP + '/file/redirect/metadata', function(
+                err,
+                res,
+                body
+            ) {
                 let meta = JSON.parse(body);
                 let file = fs.readFileSync('/tmp/wget-test-file2.bin');
-                let hash = crypto.createHash('sha256').update(file).digest('hex');
+                let hash = crypto
+                    .createHash('sha256')
+                    .update(file)
+                    .digest('hex');
                 expect(output).to.equal('Finished writing to disk');
                 expect(hash).to.equal(meta.hash);
                 done();
             });
-
         });
     });
 
-    it("Should handle infinite redirects", function(done) {
-        let download = wget.download('http://localhost:8884/file/redirect/infinite', '/tmp/wget-test-file2.bin');
+    it('Should handle infinite redirects', function(done) {
+        let download = wget.download(
+            'http://localhost:8884/file/redirect/infinite',
+            '/tmp/wget-test-file2.bin'
+        );
 
         download.on('error', function(err) {
-            expect(err).to.equal("Infinite redirect loop detected");
+            expect(err).to.equal('Infinite redirect loop detected');
             done();
         });
     });
 
-    it("Should handle relative path redirect", function(done) {
-        let download = wget.download('http://localhost:8884/file/redirect/relative', '/tmp/wget-test-file3.bin');
+    it('Should handle relative path redirect', function(done) {
+        let download = wget.download(
+            'http://localhost:8884/file/redirect/relative',
+            '/tmp/wget-test-file3.bin'
+        );
         download.on('error', function(err) {
             done(err);
         });
@@ -113,10 +143,17 @@ describe("Download Tests", function() {
             expect(fileSize).to.equal(metadata.size);
         });
         download.on('end', function(output) {
-            request(baseHTTP + '/file/redirect/metadata', function(err, res, body) {
+            request(baseHTTP + '/file/redirect/metadata', function(
+                err,
+                res,
+                body
+            ) {
                 let meta = JSON.parse(body);
                 let file = fs.readFileSync('/tmp/wget-test-file2.bin');
-                let hash = crypto.createHash('sha256').update(file).digest('hex');
+                let hash = crypto
+                    .createHash('sha256')
+                    .update(file)
+                    .digest('hex');
                 expect(output).to.equal('Finished writing to disk');
                 expect(hash).to.equal(meta.hash);
                 done();
@@ -129,11 +166,14 @@ describe("Download Tests", function() {
         });
     });
 
-    it("Should handle invalid protocol (no http/https)", function(done) {
+    it('Should handle invalid protocol (no http/https)', function(done) {
         try {
-            let download = wget.download('localhost:8884/file/redirect/infinite', '/tmp/wget-test-file2.bin');
+            let download = wget.download(
+                'localhost:8884/file/redirect/infinite',
+                '/tmp/wget-test-file2.bin'
+            );
         } catch (err) {
-            expect(err).to.equal("Your URL must use either HTTP or HTTPS.");
+            expect(err).to.equal('Your URL must use either HTTP or HTTPS.');
             done();
         }
     });
