@@ -19,6 +19,7 @@ before(function() {
 describe("Download Tests", function() {
     it("Should be able to download a file", function(done) {
         let download = wget.download('http://localhost:8884/file', '/tmp/wget-test-file.bin');
+        let bytes = 0;
         download.on('error', function(err) {
             done(err);
         });
@@ -31,7 +32,12 @@ describe("Download Tests", function() {
             let hash = crypto.createHash('sha256').update(file).digest('hex');
             expect(output).to.equal('Finished writing to disk');
             expect(hash).to.equal(metadata.hash);
+            expect(bytes).to.equal(1024 * 1024);
             done();
+        });
+        download.on('bytes', function(input) {
+            expect(input).to.be.above(0);
+            bytes = input;
         });
         download.on('progress', function(progress) {
             expect(progress).to.be.above(0);
@@ -95,5 +101,40 @@ describe("Download Tests", function() {
             expect(err).to.equal("Infinite redirect loop detected");
             done();
         });
+    });
+
+    it("Should handle relative path redirect", function(done) {
+        let download = wget.download('http://localhost:8884/file/redirect/relative', '/tmp/wget-test-file3.bin');
+        download.on('error', function(err) {
+            done(err);
+        });
+        download.on('start', function(fileSize) {
+            expect(fileSize).to.be.a('number');
+            expect(fileSize).to.equal(metadata.size);
+        });
+        download.on('end', function(output) {
+            request(baseHTTP + '/file/redirect/metadata', function(err, res, body) {
+                let meta = JSON.parse(body);
+                let file = fs.readFileSync('/tmp/wget-test-file2.bin');
+                let hash = crypto.createHash('sha256').update(file).digest('hex');
+                expect(output).to.equal('Finished writing to disk');
+                expect(hash).to.equal(meta.hash);
+                done();
+            });
+        });
+
+        download.on('progress', function(progress) {
+            expect(progress).to.be.above(0);
+            expect(progress).to.be.below(1.00000000000001);
+        });
+    });
+
+    it("Should handle invalid protocol (no http/https)", function(done) {
+        try {
+            let download = wget.download('localhost:8884/file/redirect/infinite', '/tmp/wget-test-file2.bin');
+        } catch (err) {
+            expect(err).to.equal("Your URL must use either HTTP or HTTPS.");
+            done();
+        }
     });
 });

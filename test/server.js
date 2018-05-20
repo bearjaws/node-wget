@@ -43,6 +43,11 @@ app.get('/file/redirect/infinite', function(req, res) {
     res.redirect('http://localhost:8884/file/redirect/infinite?count=' + String(count + 1));
 });
 
+app.get('/file/redirect/relative', function(req, res) {
+    res.set('Location', '/file/redirect?count=4');
+    res.status(301).end();
+});
+
 app.get('/file/redirect/metadata', function(req, res) {
     let hash = crypto.createHash('sha256').update(redirectFile).digest('hex');
     res.json({
