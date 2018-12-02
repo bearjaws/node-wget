@@ -1,6 +1,6 @@
 {
     "name": "wget-improved",
-    "version": "3.0.1",
+    "version": "3.0.2",
     "description": "wget in nodejs, forked from wuchengwei/node-wget to add improvements and help maintain the project",
     "keywords": [
         "download",
@@ -39,6 +39,6 @@
         "request": "^2.88.0"
     },
     "scripts": {
-        "test": "mocha test/test.js"
+        "test": "mocha test/test.js --exit"
     }
 }
