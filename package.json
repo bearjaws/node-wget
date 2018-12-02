@@ -33,10 +33,10 @@
     },
     "license": "MIT",
     "devDependencies": {
-        "chai": "^4.0.2",
-        "express": "^4.16.3",
-        "mocha": "^5.2.0",
-        "request": "^2.88.0"
+        "chai": "4.0.2",
+        "express": "4.16.3",
+        "mocha": "5.2.0",
+        "request": "2.88.0"
     },
     "scripts": {
         "test": "mocha test/test.js --exit"
