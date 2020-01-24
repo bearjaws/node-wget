@@ -6,7 +6,7 @@ declare const wget: {
   request(options: wget.RequestOptions, callback?: (res: Response) => void): ClientRequest
 }
 
-namespace wget {
+declare namespace wget {
   type RequestOptions = {
     gunzip?: boolean,
   } | DownloadOptions
