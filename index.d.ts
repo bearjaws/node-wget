@@ -1,9 +1,9 @@
 import { EventEmitter } from 'events'
-import { ClientRequest } from 'http'
+import { ClientRequest, IncomingMessage } from 'http'
 
 declare const wget: {
   download(src: string, output: string, options?: wget.DownloadOptions): EventEmitter
-  request(options: wget.RequestOptions, callback?: (res: Response) => void): ClientRequest
+  request(options: wget.RequestOptions, callback?: (res: IncomingMessage) => void): ClientRequest
 }
 
 declare namespace wget {
