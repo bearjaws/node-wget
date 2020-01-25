@@ -12,16 +12,17 @@ declare namespace wget {
   } | DownloadOptions
 
   type DownloadOptions = {
+    protocol?: string,
+    host?: string,
+    path?: string,
     proxy?: {
       protocol?: string,
       host?: string,
       port?: number,
       proxyAuth?: string,
       headers?: Record<string, string>,
-      method?: string,
-      path?: string,
-      proxy?: string,
-    } | string
+    } | string,
+    method?: string,
   }
 }
 
